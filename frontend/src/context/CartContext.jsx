@@ -14,7 +14,7 @@ export const CartProvider = ({ children }) => {
     }
   });
 
-  // ✅ 保存购物车时容错
+  // ✅ 每次购物车更新后保存到 localStorage（与登录用户关联）
   useEffect(() => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
@@ -26,17 +26,21 @@ export const CartProvider = ({ children }) => {
     }
   }, [cart]);
 
+  // ✅ 通用获取 ID（支持 id 或 _id）
+  const getId = (item) => item.id || item._id;
+
   const addToCart = (product) => {
-    if (!product || !product.id) {
+    const productId = getId(product);
+    if (!product || !productId) {
       console.warn('⚠️ Invalid product:', product);
       return;
     }
 
-    setCart(prev => {
-      const existing = prev.find(item => item.id === product.id);
+    setCart((prev) => {
+      const existing = prev.find((item) => getId(item) === productId);
       if (existing) {
-        return prev.map(item =>
-          item.id === product.id
+        return prev.map((item) =>
+          getId(item) === productId
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
@@ -52,9 +56,9 @@ export const CartProvider = ({ children }) => {
       return;
     }
 
-    setCart(prev =>
-      prev.map(item =>
-        item.id === id
+    setCart((prev) =>
+      prev.map((item) =>
+        getId(item) === id
           ? { ...item, quantity: Math.max(item.quantity + delta, 1) }
           : item
       )
@@ -67,7 +71,7 @@ export const CartProvider = ({ children }) => {
       return;
     }
 
-    setCart(prev => prev.filter(item => item.id !== id));
+    setCart((prev) => prev.filter((item) => getId(item) !== id));
   };
 
   return (

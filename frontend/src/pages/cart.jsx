@@ -32,17 +32,20 @@ const Cart = () => {
     <div style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto' }}>
       <h2>Shopping Cart</h2>
 
-      {cart.map((item) => (
-        <div key={item.id} style={{ marginBottom: '1.5rem' }}>
-          <h4>{item.name}</h4>
-          <p>Price: ${item.price} x {item.quantity}</p>
-          <div>
-            <button onClick={() => updateQuantity(item.id, -1)}>-</button>
-            <button onClick={() => updateQuantity(item.id, 1)}>+</button>
-            <button onClick={() => removeFromCart(item.id)}>Remove</button>
+      {cart.map((item) => {
+        const id = item.id || item._id; // ✅ 兼容 MongoDB
+        return (
+          <div key={id} style={{ marginBottom: '1.5rem' }}>
+            <h4>{item.name}</h4>
+            <p>Price: ${item.price} x {item.quantity}</p>
+            <div>
+              <button onClick={() => updateQuantity(id, -1)}>-</button>
+              <button onClick={() => updateQuantity(id, 1)}>+</button>
+              <button onClick={() => removeFromCart(id)}>Remove</button>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       <hr />
 
