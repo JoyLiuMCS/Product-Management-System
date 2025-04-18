@@ -4,19 +4,34 @@ export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState(() => {
-    const user = JSON.parse(localStorage.getItem('user')); // ✅ 获取用户
-    const saved = user ? localStorage.getItem(`cart-${user.username}`) : null;
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const saved = user ? localStorage.getItem(`cart-${user.username}`) : null;
+      return saved ? JSON.parse(saved) : [];
+    } catch (err) {
+      console.error('❌ Failed to load cart from localStorage:', err);
+      return [];
+    }
   });
 
+  // ✅ 保存购物车时容错
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-      localStorage.setItem(`cart-${user.username}`, JSON.stringify(cart));
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (user) {
+        localStorage.setItem(`cart-${user.username}`, JSON.stringify(cart));
+      }
+    } catch (err) {
+      console.error('❌ Failed to save cart to localStorage:', err);
     }
   }, [cart]);
 
   const addToCart = (product) => {
+    if (!product || !product.id) {
+      console.warn('⚠️ Invalid product:', product);
+      return;
+    }
+
     setCart(prev => {
       const existing = prev.find(item => item.id === product.id);
       if (existing) {
@@ -32,6 +47,11 @@ export const CartProvider = ({ children }) => {
   };
 
   const updateQuantity = (id, delta) => {
+    if (!id || typeof delta !== 'number') {
+      console.warn('⚠️ Invalid quantity update:', { id, delta });
+      return;
+    }
+
     setCart(prev =>
       prev.map(item =>
         item.id === id
@@ -42,6 +62,11 @@ export const CartProvider = ({ children }) => {
   };
 
   const removeFromCart = (id) => {
+    if (!id) {
+      console.warn('⚠️ Invalid remove id:', id);
+      return;
+    }
+
     setCart(prev => prev.filter(item => item.id !== id));
   };
 
