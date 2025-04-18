@@ -131,6 +131,26 @@ function ProductForm() {
       <button type="submit" style={{ marginTop: '1rem' }}>
         {id ? 'Update Product' : 'Add Product'}
       </button>
+      {id && (
+  <button
+    type="button"
+    onClick={async () => {
+      const confirmDelete = window.confirm('确定要删除这个产品吗？');
+      if (!confirmDelete) return;
+
+      try {
+        await api.delete(`/products/${id}`);
+        console.log('✅ 产品已删除');
+        navigate('/products');
+      } catch (err) {
+        console.error('❌ 删除失败：', err.message);
+      }
+    }}
+    style={{ marginTop: '1rem', backgroundColor: 'red', color: 'white' }}
+  >
+    Delete Product
+  </button>
+)}
     </form>
   );
 }

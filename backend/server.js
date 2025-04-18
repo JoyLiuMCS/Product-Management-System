@@ -32,9 +32,10 @@ app.post('/api/products', async (req, res) => {
         price,
         description,
         category,
-        quantity,
+        quantity: quantity ?? 50, // 👈 如果没传就设为 50
         imageUrl
       });
+      
   
       const savedProduct = await product.save();
   
@@ -52,11 +53,18 @@ app.post('/api/products', async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1;    // 当前页码
       const limit = parseInt(req.query.limit) || 10; // 每页产品数量
+      const sortOrder = req.query.sort || 'asc';
+
+      let sortObj = { createdAt: -1 }; // ✅ 默认
+      if (sortOrder === 'asc') sortObj = { price: 1 };
+      else if (sortOrder === 'desc') sortObj = { price: -1 };
+      else if (sortOrder === 'latest') sortObj = { createdAt: -1 };
+      
   
       const skip = (page - 1) * limit;
   
       const total = await Product.countDocuments(); // 产品总数
-      const products = await Product.find().skip(skip).limit(limit);
+      const products = await Product.find().sort(sortObj).skip(skip).limit(limit);
   
       res.json({
         products,
