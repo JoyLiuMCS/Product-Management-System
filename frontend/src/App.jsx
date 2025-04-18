@@ -3,6 +3,7 @@ import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Cart from './pages/cart';
 import ProductList from './pages/ProductList';
+import ProductFormPage from './pages/ProductFormPage';
 import Navbar from './components/Navbar'; 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/products" element={<ProductList />} />
+        <Route path="/add-product" element={<ProductFormPage />} />
         <Route path="/cart" element={<Cart />} />
       </Routes>
     </BrowserRouter>
