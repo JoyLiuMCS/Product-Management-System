@@ -4,12 +4,16 @@ export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState(() => {
-    const saved = localStorage.getItem('cart');
+    const user = JSON.parse(localStorage.getItem('user')); // ✅ 获取用户
+    const saved = user ? localStorage.getItem(`cart-${user.username}`) : null;
     return saved ? JSON.parse(saved) : [];
   });
 
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      localStorage.setItem(`cart-${user.username}`, JSON.stringify(cart));
+    }
   }, [cart]);
 
   const addToCart = (product) => {

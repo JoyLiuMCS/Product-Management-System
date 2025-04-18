@@ -1,16 +1,24 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-export default function AuthForm({ type = 'signin' }) { // Default to signin
+export default function AuthForm({ type = 'signin' }) {
   const [formData, setFormData] = React.useState({
     email: '',
     password: '',
   });
 
+  const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(`${type} submitted:`, formData);
-    // API call would go here
+
+    // ✅ 模拟用户登录成功，保存用户信息（可加 token 等）
+    const username = formData.email.split('@')[0]; // 用邮箱前缀作为用户名
+    localStorage.setItem('user', JSON.stringify({ username }));
+
+    // ✅ 登录成功后跳转到产品页
+    navigate('/products');
   };
 
   return (
@@ -21,14 +29,14 @@ export default function AuthForm({ type = 'signin' }) { // Default to signin
           type="email"
           placeholder="Email"
           value={formData.email}
-          onChange={(e) => setFormData({...formData, email: e.target.value})}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           required
         />
         <input
           type="password"
           placeholder="Password"
           value={formData.password}
-          onChange={(e) => setFormData({...formData, password: e.target.value})}
+          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
           required
           minLength={8}
         />
@@ -36,8 +44,7 @@ export default function AuthForm({ type = 'signin' }) { // Default to signin
           {type === 'signin' ? 'Sign In' : 'Sign Up'}
         </button>
       </form>
-      
-      {/* Toggle link between signin/signup */}
+
       {type === 'signin' ? (
         <p className="auth-switch">
           Don't have an account? <Link to="/signup">Sign up</Link>
