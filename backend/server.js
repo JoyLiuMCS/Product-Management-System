@@ -47,6 +47,46 @@ app.post('/api/products', async (req, res) => {
     }
   });
 
+  // 获取单个产品
+app.get('/api/products/:id', async (req, res) => {
+    try {
+      const product = await Product.findById(req.params.id);
+      if (!product) return res.status(404).json({ error: '找不到该产品' });
+      res.json(product);
+    } catch (err) {
+      res.status(500).json({ error: '获取产品失败' });
+    }
+  });
+  
+  // 更新产品
+  app.put('/api/products/:id', async (req, res) => {
+    try {
+      const { name, price, description } = req.body;
+      const updated = await Product.findByIdAndUpdate(
+        req.params.id,
+        { name, price, description },
+        { new: true } // 返回更新后的文档
+      );
+      res.json(updated);
+    } catch (err) {
+      res.status(500).json({ error: '更新产品失败' });
+    }
+  });
+  
+  app.delete('/api/products/:id', async (req, res) => {
+    try {
+      const deleted = await Product.findByIdAndDelete(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ error: '产品未找到' });
+      }
+      res.json({ message: '产品已删除' });
+    } catch (err) {
+      console.error('❌ 删除失败：', err.message);
+      res.status(500).json({ error: '删除失败' });
+    }
+  });
+  
+
 app.listen(PORT, () => {
   console.log(`🚀 Server is running at http://localhost:${PORT}`);
 });

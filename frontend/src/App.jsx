@@ -3,6 +3,7 @@ import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Cart from './pages/cart';
 import ProductList from './pages/ProductList';
+import ProductDetail from './pages/ProductDetail';
 import ProductFormPage from './pages/ProductFormPage';
 import Navbar from './components/Navbar'; 
 function App() {
@@ -15,6 +16,8 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/products" element={<ProductList />} />
         <Route path="/add-product" element={<ProductFormPage />} />
+        <Route path="/products/:id" element={<ProductDetail />} />
+        <Route path="/products/:id/edit" element={<ProductFormPage />} />
         <Route path="/cart" element={<Cart />} />
       </Routes>
     </BrowserRouter>
