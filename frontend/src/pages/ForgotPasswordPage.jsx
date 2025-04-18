@@ -50,12 +50,14 @@ const ForgotPasswordPage = () => {
           <h2>Reset Password</h2>
           <form onSubmit={handleSubmit}>
             <div className="input-group">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+            <input
+  className="auth-input"
+  type="email"
+  placeholder="Enter your email"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+/>
+
               {error && <p className="error-text">{error}</p>}
             </div>
 

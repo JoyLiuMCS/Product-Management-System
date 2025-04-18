@@ -52,17 +52,31 @@ fetch(endpoint, {
   },
   body: JSON.stringify(formData),
 })
-  .then((res) => {
-    if (!res.ok) throw new Error('Authentication failed');
-    return res.json();
+  .then(async (res) => {
+    const responseText = await res.text(); // grab raw response
+    console.log('Raw response:', res.status, responseText);
+
+    if (!res.ok) {
+      // Try to extract error message from response
+      let message;
+      try {
+        const json = JSON.parse(responseText);
+        message = json.error || json.message || 'Authentication failed';
+      } catch {
+        message = responseText || 'Authentication failed';
+      }
+      throw new Error(message);
+    }
+
+    return JSON.parse(responseText); // Continue if successful
   })
   .then((data) => {
     console.log(`${type} successful:`, data);
-    navigate('/'); // or wherever you want after login/signup
+    navigate('/products'); // Navigate to product page after signin/signup
   })
   .catch((err) => {
-    console.error(err);
-    alert('Error during authentication.');
+    console.error('Caught error:', err.message);
+    alert(err.message); // Now shows actual error
   });
 
   };
