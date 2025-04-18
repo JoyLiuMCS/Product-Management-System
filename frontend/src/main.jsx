@@ -8,7 +8,7 @@ import store from './redux/store';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <CartProvider>   {/* 👈 包裹 App */}
+    <CartProvider> 
     <Provider store={store}>
       <App />
     </Provider>

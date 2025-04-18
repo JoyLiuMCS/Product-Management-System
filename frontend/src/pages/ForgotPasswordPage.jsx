@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../components/AuthStyles.css'; 
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
@@ -22,48 +23,31 @@ const ForgotPasswordPage = () => {
     setError('');
     console.log('Password reset requested for:', email);
     // Here you would typically call your API to send the reset email
-    navigate('/password-reset-sent'); // Redirect to confirmation page
+    navigate('/password-reset-sent');
   };
 
   return (
-    <div
-      className="auth-overlay"
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgba(247, 247, 247, 0.4)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1000,
-      }}
-    >
-      <div style={{ position: 'relative' }}>
-        {/* Close Button */}
-        <div className="auth-container">
-        <button
-          onClick={() => navigate('/')}
-          className="close-btn"
-        >
+    <div className="auth-overlay">
+      <div className="auth-container">
+        <button onClick={() => navigate('/')} className="close-btn">
           &times;
         </button>
-          <h2>Reset Password</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="input-group">
+        <h2 className="auth-title">Reset Password</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
             <input
-  className="auth-input"
-  type="email"
-  placeholder="Enter your email"
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-/>
-
-              {error && <p className="error-text">{error}</p>}
-            </div>
-
-            <button type="submit">Send Reset Link</button>
-          </form>
-        </div>
+              className={`auth-input ${error ? 'error' : ''}`}
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            {error && <p className="error-text">{error}</p>}
+          </div>
+          <button className="auth-btn" type="submit">
+            Send Reset Link
+          </button>
+        </form>
       </div>
     </div>
   );
