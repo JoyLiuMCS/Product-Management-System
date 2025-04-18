@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import connectDB from './db.js';
 import Product from './models/Product.js';
+import User from './models/User.js';
 
 const app = express();
 const PORT = 5500;
@@ -85,6 +86,42 @@ app.get('/api/products/:id', async (req, res) => {
       res.status(500).json({ error: '删除失败' });
     }
   });
+
+  // 注册接口
+app.post('/api/signup', async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password)
+    return res.status(400).json({ error: 'Email and password are required' });
+
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser)
+      return res.status(400).json({ error: 'Email already in use' });
+
+    const newUser = new User({ email, password });
+    await newUser.save();
+    res.status(201).json({ message: 'User created successfully', user: newUser });
+  } catch (err) {
+    res.status(500).json({ error: 'Error creating user', details: err.message });
+  }
+});
+
+// 登录接口
+app.post('/api/signin', async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password)
+    return res.status(400).json({ error: 'Email and password are required' });
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user || user.password !== password)
+      return res.status(401).json({ error: 'Invalid email or password' });
+
+    res.json({ message: 'Sign-in successful', user });
+  } catch (err) {
+    res.status(500).json({ error: 'Error during sign-in', details: err.message });
+  }
+});
   
 
 app.listen(PORT, () => {

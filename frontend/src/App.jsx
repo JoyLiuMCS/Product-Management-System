@@ -5,6 +5,8 @@ import Cart from './pages/cart';
 import ProductList from './pages/ProductList';
 import ProductDetail from './pages/ProductDetail';
 import ProductFormPage from './pages/ProductFormPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import PasswordResetSent from './pages/PasswordResetSent';
 import Navbar from './components/Navbar'; 
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
         <Route path="/add-product" element={<ProductFormPage />} />
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/products/:id/edit" element={<ProductFormPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/password-reset-sent" element={<PasswordResetSent />} />
         <Route path="/cart" element={<Cart />} />
       </Routes>
     </BrowserRouter>
