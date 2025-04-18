@@ -2,11 +2,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../api/axios';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { CartContext } from '../context/CartContext';
+
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [sortOrder, setSortOrder] = useState('asc'); // asc / desc
   const navigate = useNavigate();
+  const { addToCart } = useContext(CartContext);
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -71,12 +76,19 @@ const ProductList = () => {
             <p>{product.price} $$</p>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 'auto' }}>
               <button
-                onClick={() => console.log('Add to cart:', product.name)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addToCart(product);
+                }}
               >
                 ➕ Add
+                
               </button>
               <button
-                onClick={() => navigate(`/products/${product._id}/edit`)}
+                onClick={(e) => {
+                  e.stopPropagation(); // ✅ 阻止跳转
+                  navigate(`/products/${product._id}/edit`);
+                }}
               >
                 ✏️ Edit
               </button>
