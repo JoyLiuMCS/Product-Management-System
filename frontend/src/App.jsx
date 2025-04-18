@@ -6,12 +6,13 @@ import ProductList from './pages/ProductList';
 import ProductDetail from './pages/ProductDetail';
 import ProductFormPage from './pages/ProductFormPage';
 import Navbar from './components/Navbar'; 
+
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
-        <Route path="/" element={<SignIn />} />       {/* 默认跳转到登录 */}
+        <Route path="/" element={<SignIn />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/products" element={<ProductList />} />
