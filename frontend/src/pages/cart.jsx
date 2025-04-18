@@ -5,17 +5,23 @@ const Cart = () => {
   const { cart, updateQuantity, removeFromCart } = useContext(CartContext);
   const [promoCode, setPromoCode] = useState('');
   const [discount, setDiscount] = useState(0);
+  const [promoError, setPromoError] = useState('');
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const tax = +(subtotal * 0.1).toFixed(2); // 10% tax
   const total = +(subtotal + tax - discount).toFixed(2);
 
   const handleApplyPromo = () => {
-    if (promoCode.trim().toUpperCase() === '20 DOLLAR OFF') {
+    const trimmed = promoCode.trim().toUpperCase();
+    if (!trimmed) {
+      setDiscount(0);
+      setPromoError('Please enter a promo code.');
+    } else if (trimmed === '20 DOLLAR OFF') {
       setDiscount(20);
+      setPromoError('');
     } else {
       setDiscount(0);
-      alert('❌ Invalid promo code');
+      setPromoError('❌ Invalid promo code');
     }
   };
 
@@ -33,7 +39,7 @@ const Cart = () => {
       <h2>Shopping Cart</h2>
 
       {cart.map((item) => {
-        const id = item.id || item._id; // ✅ 兼容 MongoDB
+        const id = item.id || item._id; // ✅ 支持 id 或 _id
         return (
           <div key={id} style={{ marginBottom: '1.5rem' }}>
             <h4>{item.name}</h4>
@@ -49,6 +55,7 @@ const Cart = () => {
 
       <hr />
 
+      {/* Promo Code Section */}
       <div style={{ margin: '1rem 0' }}>
         <input
           type="text"
@@ -57,8 +64,12 @@ const Cart = () => {
           onChange={(e) => setPromoCode(e.target.value)}
         />
         <button onClick={handleApplyPromo}>Apply</button>
+        {promoError && (
+          <p style={{ color: 'red', marginTop: '0.5rem' }}>{promoError}</p>
+        )}
       </div>
 
+      {/* Price Summary */}
       <div style={{ marginTop: '1rem' }}>
         <p>Subtotal: ${subtotal}</p>
         <p>Tax: ${tax}</p>
