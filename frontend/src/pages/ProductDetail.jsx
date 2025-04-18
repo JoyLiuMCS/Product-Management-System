@@ -1,24 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
+import { useContext } from 'react';
+import { CartContext } from '../context/CartContext';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
-
+  const { cart, addToCart, updateQuantity } = useContext(CartContext);
+  const getQuantity = (productId) => {
+    const found = cart.find(item => item.id === productId);
+    return found ? found.quantity : 0;
+  };
+  
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const res = await api.get(`/products/${id}`);
-        setProduct(res.data);
+        setProduct({
+          ...res.data,
+          id: res.data._id  // 💥 关键补丁！
+        });
+        console.log('🧾 当前详情页产品：', res.data);
+
       } catch (err) {
         console.error('❌ 获取产品详情失败：', err.message);
       }
     };
-
+  
     fetchProduct();
   }, [id]);
+  
 
   if (!product) {
     return <p>Loading...</p>;
@@ -46,8 +59,16 @@ const ProductDetail = () => {
           <p>{product.description}</p>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2rem' }}>
-            <button onClick={() => console.log('Add to cart:', product.name)}>➕ Add</button>
-            <button onClick={() => navigate(`/products/${product._id}/edit`)}>✏️ Edit</button>
+          {getQuantity(product.id) === 0 ? (
+  <button onClick={() => addToCart(product)}>➕ Add</button>
+) : (
+  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+    <button onClick={() => updateQuantity(product.id, -1)}>➖</button>
+    <span>{getQuantity(product.id)}</span>
+    <button onClick={() => addToCart(product)}>➕</button>
+  </div>
+)}
+            <button onClick={() => navigate(`/products/${product._id}/edit`)}> Edit</button>
           </div>
         </div>
       </div>

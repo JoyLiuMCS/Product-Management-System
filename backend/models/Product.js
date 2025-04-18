@@ -13,6 +13,16 @@ const productSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
+    imageUrl: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    category: {
+      type: String,
+      enum: ['food', 'electronics', 'clothing'],
+      required: true,
+    }, 
     description: {
       type: String,
       required: true,
