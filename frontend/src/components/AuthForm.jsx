@@ -72,8 +72,13 @@ fetch(endpoint, {
   })
   .then((data) => {
     console.log(`${type} successful:`, data);
-    navigate('/products'); // Navigate to product page after signin/signup
+  
+    // ✅ 将用户 email 保存到 localStorage，用于购物车标识
+    localStorage.setItem('user', JSON.stringify({ username: formData.email }));
+  
+    navigate('/products'); // 跳转到产品页
   })
+  
   .catch((err) => {
     console.error('Caught error:', err.message);
     alert(err.message); // Now shows actual error

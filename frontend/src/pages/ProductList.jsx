@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
+
 import { CartContext } from '../context/CartContext';
 
 const ProductList = () => {
@@ -12,18 +13,26 @@ const ProductList = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false); // ✨ 加上 loading
   const navigate = useNavigate();
-  const { cart, addToCart, updateQuantity } = useContext(CartContext);
+  const { cart, addToCart, updateQuantity, removeFromCart, setQuantity } = useContext(CartContext);
 
+  
   const getQuantity = (productId) => {
     const found = cart.find(item => item.id === productId);
     return found ? found.quantity : 0;
   };
-
+  const [inputCache, setInputCache] = useState({}); // 用于缓冲用户输入
+  const [tempQty, setTempQty] = useState('');
+  const getInputQty = (id) => {
+    return inputCache[id] !== undefined
+      ? inputCache[id]
+      : getQuantity(id).toString();
+  };
+  
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true); // 👈 开始加载
       try {
-        const res = await axios.get(`/products?page=${currentPage}&limit=10`);
+        const res = await axios.get(`/products?page=${currentPage}&limit=10&sort=${sortOrder}`);
         const mapped = res.data.products.map(p => ({ ...p, id: p._id }));
         setProducts(mapped);
         setTotalPages(res.data.totalPages);
@@ -35,6 +44,8 @@ const ProductList = () => {
     };
     fetchProducts();
   }, [currentPage]);
+  
+    
 
   const sortedProducts = [...products].sort((a, b) => {
     if (sortOrder === 'asc') return a.price - b.price;
@@ -93,36 +104,89 @@ const ProductList = () => {
                 <p>$ {product.price}</p>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  {getQuantity(product.id) === 0 ? (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        addToCart(product);
-                      }}
-                    >
-                      ➕ Add
-                    </button>
-                  ) : (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          updateQuantity(product.id, -1);
-                        }}
-                      >
-                        ➖
-                      </button>
-                      <span>{getQuantity(product.id)}</span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToCart(product);
-                        }}
-                      >
-                        ➕
-                      </button>
-                    </div>
-                  )}
+                {(() => {
+  const quantity = getQuantity(product.id);
+
+  if (quantity === 0) {
+    return (
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          addToCart(product);
+        }}
+      >
+        ➕ Add
+      </button>
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          updateQuantity(product.id, -1);
+        }}
+      >
+        ➖
+      </button>
+
+      <input
+  type="text"
+  value={getInputQty(product.id)}
+  onClick={(e) => e.stopPropagation()}
+  onChange={(e) => {
+    const val = e.target.value;
+    setInputCache(prev => ({ ...prev, [product.id]: val }));
+
+    if (val === '') return; // 用户还在输入，先不处理
+
+    const num = parseInt(val);
+    if (isNaN(num)) return;
+
+    if (num > product.quantity) {
+      alert('⚠️ 超出库存');
+      return;
+    }
+
+setQuantity(product.id, num); // ✅ 用新方法直接设置数量
+
+  if (num <= 0) {
+    setInputCache(prev => {
+      const copy = { ...prev };
+      delete copy[product.id];
+      return copy;
+    });
+  }
+  }}
+  onBlur={() => {
+    // 输入结束后，清除缓存
+    setInputCache(prev => {
+      const copy = { ...prev };
+      delete copy[product.id];
+      return copy;
+    });
+  }}
+  style={{ width: '50px', textAlign: 'center' }}
+/>
+
+
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          if (quantity >= product.quantity) {
+            alert('⚠️ 超出库存，Out of Stock!');
+            return;
+          }
+          addToCart(product);
+        }}
+      >
+        ➕
+      </button>
+    </div>
+  );
+})()}
+
 
                   <button
                     onClick={(e) => {

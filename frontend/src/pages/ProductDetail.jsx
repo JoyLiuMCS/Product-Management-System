@@ -8,11 +8,13 @@ const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
-  const { cart, addToCart, updateQuantity } = useContext(CartContext);
+  const { cart, addToCart, updateQuantity, removeFromCart } = useContext(CartContext);
   const getQuantity = (productId) => {
     const found = cart.find(item => item.id === productId);
     return found ? found.quantity : 0;
   };
+  const [tempQty, setTempQty] = useState('');
+
   
   useEffect(() => {
     const fetchProduct = async () => {
@@ -31,6 +33,13 @@ const ProductDetail = () => {
   
     fetchProduct();
   }, [id]);
+  useEffect(() => {
+    if (product) {
+      const currentQty = getQuantity(product.id);
+      setTempQty(currentQty.toString());
+    }
+  }, [cart, product]);
+  
   
 
   if (!product) {
@@ -59,15 +68,63 @@ const ProductDetail = () => {
           <p>{product.description}</p>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2rem' }}>
-          {getQuantity(product.id) === 0 ? (
-  <button onClick={() => addToCart(product)}>➕ Add</button>
-) : (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-    <button onClick={() => updateQuantity(product.id, -1)}>➖</button>
-    <span>{getQuantity(product.id)}</span>
-    <button onClick={() => addToCart(product)}>➕</button>
-  </div>
-)}
+          {(() => {
+  const quantity = getQuantity(product.id);
+
+  if (quantity === 0) {
+    return (
+      <button
+        onClick={() => addToCart(product)}
+        style={{ marginTop: '1rem' }}
+      >
+        ➕ Add to Cart
+      </button>
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '1rem' }}>
+      <button onClick={() => updateQuantity(product.id, -1)}>➖</button>
+
+      <input
+  type="number"
+  min="0"
+  max={product.quantity}
+  value={tempQty}
+  onClick={(e) => e.stopPropagation()}
+  onChange={(e) => setTempQty(e.target.value)} // 🧠 不再直接更新 cart
+  onBlur={() => {
+    const newQty = parseInt(tempQty);
+    if (tempQty === '' || newQty <= 0) {
+      removeFromCart(product.id);
+    } else if (isNaN(newQty)) {
+      setTempQty(getQuantity(product.id).toString()); // 还原原值
+    } else if (newQty > product.quantity) {
+      alert('⚠️ 超出库存');
+      setTempQty(getQuantity(product.id).toString());
+    } else {
+      updateQuantity(product.id, newQty - getQuantity(product.id));
+    }
+  }}
+  style={{ width: '50px', textAlign: 'center' }}
+/>
+
+
+      <button
+        onClick={() => {
+          if (quantity >= product.quantity) {
+            alert('⚠️ 超出库存，Out of Stock!');
+            return;
+          }
+          addToCart(product);
+        }}
+      >
+        ➕
+      </button>
+    </div>
+  );
+})()}
+
             <button onClick={() => navigate(`/products/${product._id}/edit`)}> Edit</button>
           </div>
         </div>
