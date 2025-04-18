@@ -5,17 +5,23 @@ const Cart = () => {
   const { cart, updateQuantity, removeFromCart } = useContext(CartContext);
   const [promoCode, setPromoCode] = useState('');
   const [discount, setDiscount] = useState(0);
+  const [promoError, setPromoError] = useState('');
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const tax = +(subtotal * 0.1).toFixed(2); // 10% tax
   const total = +(subtotal + tax - discount).toFixed(2);
 
   const handleApplyPromo = () => {
-    if (promoCode.trim().toUpperCase() === '20 DOLLAR OFF') {
+    const trimmed = promoCode.trim().toUpperCase();
+    if (!trimmed) {
+      setDiscount(0);
+      setPromoError('Please enter a promo code.');
+    } else if (trimmed === '20 DOLLAR OFF') {
       setDiscount(20);
+      setPromoError('');
     } else {
       setDiscount(0);
-      alert('❌ Invalid promo code');
+      setPromoError('❌ Invalid promo code.');
     }
   };
 
@@ -54,6 +60,9 @@ const Cart = () => {
           onChange={(e) => setPromoCode(e.target.value)}
         />
         <button onClick={handleApplyPromo}>Apply</button>
+        {promoError && (
+          <p style={{ color: 'red', marginTop: '0.5rem' }}>{promoError}</p>
+        )}
       </div>
 
       <div style={{ marginTop: '1rem' }}>
@@ -63,7 +72,10 @@ const Cart = () => {
         <h3>Total: ${total}</h3>
       </div>
 
-      <button style={{ marginTop: '1rem' }} onClick={() => alert('✅ Proceeding to checkout...')}>
+      <button
+        style={{ marginTop: '1rem' }}
+        onClick={() => alert('✅ Proceeding to checkout...')}
+      >
         Continue to Checkout
       </button>
     </div>
