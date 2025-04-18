@@ -25,8 +25,17 @@ app.use(express.json());
 
 app.post('/api/products', async (req, res) => {
     try {
-      const { name, price, description } = req.body;
-      const product = new Product({ name, price, description });
+      const { name, price, description, category, quantity, imageUrl } = req.body;
+  
+      const product = new Product({
+        name,
+        price,
+        description,
+        category,
+        quantity,
+        imageUrl
+      });
+  
       const savedProduct = await product.save();
   
       console.log('✅ 已保存产品：', savedProduct);
@@ -37,16 +46,29 @@ app.post('/api/products', async (req, res) => {
       res.status(500).json({ error: '创建产品失败' });
     }
   });
+  
 
   app.get('/api/products', async (req, res) => {
     try {
-      const products = await Product.find(); // 查询所有产品
-      res.json(products); // 返回 JSON 数据
+      const page = parseInt(req.query.page) || 1;    // 当前页码
+      const limit = parseInt(req.query.limit) || 10; // 每页产品数量
+  
+      const skip = (page - 1) * limit;
+  
+      const total = await Product.countDocuments(); // 产品总数
+      const products = await Product.find().skip(skip).limit(limit);
+  
+      res.json({
+        products,
+        totalPages: Math.ceil(total / limit),
+        currentPage: page
+      });
     } catch (err) {
       console.error('❌ 获取产品失败：', err.message);
       res.status(500).json({ error: '获取产品失败' });
     }
   });
+  
 
   // 获取单个产品
 app.get('/api/products/:id', async (req, res) => {
@@ -62,17 +84,20 @@ app.get('/api/products/:id', async (req, res) => {
   // 更新产品
   app.put('/api/products/:id', async (req, res) => {
     try {
-      const { name, price, description } = req.body;
+      const { name, price, description, category, quantity, imageUrl } = req.body;
+  
       const updated = await Product.findByIdAndUpdate(
         req.params.id,
-        { name, price, description },
-        { new: true } // 返回更新后的文档
+        { name, price, description, category, quantity, imageUrl },
+        { new: true }
       );
+  
       res.json(updated);
     } catch (err) {
       res.status(500).json({ error: '更新产品失败' });
     }
   });
+  
   
   app.delete('/api/products/:id', async (req, res) => {
     try {
