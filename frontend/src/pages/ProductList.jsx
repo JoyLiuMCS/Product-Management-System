@@ -16,7 +16,7 @@ const ProductList = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get('/products');
+        const res = await axios.get('http://localhost:5500/api/products');
         setProducts(res.data);
       } catch (err) {
         console.error('❌ 获取产品失败：', err.message);
