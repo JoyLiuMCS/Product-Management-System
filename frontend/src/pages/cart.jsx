@@ -1,55 +1,59 @@
 import React, { useContext, useState } from 'react';
 import { CartContext } from '../context/CartContext';
-import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
   const { cart, updateQuantity, removeFromCart } = useContext(CartContext);
-  const [discountCode, setDiscountCode] = useState('');
+  const [promoCode, setPromoCode] = useState('');
   const [discount, setDiscount] = useState(0);
-  const navigate = useNavigate();
-
-  const applyDiscount = () => {
-    if (discountCode.trim().toUpperCase() === '20 DOLLAR OFF') {
-      setDiscount(20);
-    } else {
-      alert('Invalid promo code');
-      setDiscount(0);
-    }
-  };
 
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const tax = +(subtotal * 0.1).toFixed(2); // 10% tax
   const total = +(subtotal + tax - discount).toFixed(2);
 
+  const handleApplyPromo = () => {
+    if (promoCode.trim().toUpperCase() === '20 DOLLAR OFF') {
+      setDiscount(20);
+    } else {
+      setDiscount(0);
+      alert('❌ Invalid promo code');
+    }
+  };
+
   if (cart.length === 0) {
     return (
       <div style={{ padding: '2rem' }}>
-        <h2>Your cart is empty.</h2>
-        <button onClick={() => navigate('/products')}>Browse Products</button>
+        <h2>Shopping Cart</h2>
+        <p>Your cart is empty.</p>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <div style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto' }}>
       <h2>Shopping Cart</h2>
-      {cart.map(item => (
-        <div key={item.id} style={{ borderBottom: '1px solid #ccc', marginBottom: '1rem', paddingBottom: '1rem' }}>
-          <h3>{item.name}</h3>
+
+      {cart.map((item) => (
+        <div key={item.id} style={{ marginBottom: '1.5rem' }}>
+          <h4>{item.name}</h4>
           <p>Price: ${item.price} x {item.quantity}</p>
-          <button onClick={() => updateQuantity(item.id, -1)}>-</button>
-          <button onClick={() => updateQuantity(item.id, 1)}>+</button>
-          <button onClick={() => removeFromCart(item.id)}>Remove</button>
+          <div>
+            <button onClick={() => updateQuantity(item.id, -1)}>-</button>
+            <button onClick={() => updateQuantity(item.id, 1)}>+</button>
+            <button onClick={() => removeFromCart(item.id)}>Remove</button>
+          </div>
         </div>
       ))}
 
-      <div style={{ marginTop: '2rem' }}>
+      <hr />
+
+      <div style={{ margin: '1rem 0' }}>
         <input
+          type="text"
           placeholder="Enter promo code"
-          value={discountCode}
-          onChange={(e) => setDiscountCode(e.target.value)}
+          value={promoCode}
+          onChange={(e) => setPromoCode(e.target.value)}
         />
-        <button onClick={applyDiscount}>Apply</button>
+        <button onClick={handleApplyPromo}>Apply</button>
       </div>
 
       <div style={{ marginTop: '1rem' }}>
@@ -59,7 +63,7 @@ const Cart = () => {
         <h3>Total: ${total}</h3>
       </div>
 
-      <button onClick={() => alert('Checkout not implemented')} style={{ marginTop: '1rem' }}>
+      <button style={{ marginTop: '1rem' }} onClick={() => alert('✅ Proceeding to checkout...')}>
         Continue to Checkout
       </button>
     </div>
