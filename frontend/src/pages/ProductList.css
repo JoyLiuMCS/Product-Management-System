@@ -1,0 +1,37 @@
+.product-grid {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2rem;
+  
+    /* 默认桌面端一行 5 个 */
+    grid-template-columns: repeat(5, 1fr);
+  }
+  
+  /* 1200px 以下变 4 个 */
+  @media (max-width: 1200px) {
+    .product-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  
+  /* 900px 以下变 3 个 */
+  @media (max-width: 900px) {
+    .product-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  /* 600px 以下变 2 个 */
+  @media (max-width: 600px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  /* 400px 以下变 1 个 */
+  @media (max-width: 400px) {
+    .product-grid {
+      grid-template-columns: repeat(1, 1fr);
+    }
+  }
+  
