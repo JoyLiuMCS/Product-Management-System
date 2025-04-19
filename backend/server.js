@@ -1,8 +1,10 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import bcrypt from 'bcrypt';
 import connectDB from './db.js';
 import Product from './models/Product.js';
 import User from './models/User.js';
+import { authenticate, requireAdmin } from './middleware/authMiddleware.js';
 
 const app = express();
 const PORT = 5500;
@@ -120,42 +122,87 @@ app.get('/api/products/:id', async (req, res) => {
     }
   });
 
-  // 注册接口
-app.post('/api/signup', async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password)
-    return res.status(400).json({ error: 'Email and password are required' });
-
-  try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser)
-      return res.status(400).json({ error: 'Email already in use' });
-
-    const newUser = new User({ email, password });
-    await newUser.save();
-    res.status(201).json({ message: 'User created successfully', user: newUser });
-  } catch (err) {
-    res.status(500).json({ error: 'Error creating user', details: err.message });
-  }
-});
-
-// 登录接口
-app.post('/api/signin', async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password)
-    return res.status(400).json({ error: 'Email and password are required' });
-
-  try {
-    const user = await User.findOne({ email });
-    if (!user || user.password !== password)
-      return res.status(401).json({ error: 'Invalid email or password' });
-
-    res.json({ message: 'Sign-in successful', user });
-  } catch (err) {
-    res.status(500).json({ error: 'Error during sign-in', details: err.message });
-  }
-});
+  app.post('/api/signin', async (req, res) => {
+    const { email, password } = req.body;
   
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+  
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(400).json({ message: 'Invalid email or password' });
+      }
+  
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: 'Invalid email or password' });
+      }
+  
+      // Optional: exclude password from the response
+      const { password: _, ...userWithoutPassword } = user.toObject();
+  
+      res.json({ message: 'Sign-in successful', user: userWithoutPassword });
+    } catch (err) {
+      console.error('Error during sign-in:', err.message);
+      res.status(500).json({ error: 'Error during sign-in', details: err.message });
+    }
+  });
+
+  app.post('/api/signup', async (req, res) => {
+    const { email, password } = req.body;
+  
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+  
+    try {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ error: 'User already exists' });
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      const newUser = new User({
+        email,
+        password: hashedPassword,
+        role: 'user' // default role
+      });
+  
+      const savedUser = await newUser.save();
+      const { password: _, ...userWithoutPassword } = savedUser.toObject();
+  
+      res.status(201).json({ message: 'Signup successful', user: userWithoutPassword });
+    } catch (err) {
+      console.error('❌ Signup failed:', err.message);
+      res.status(500).json({ error: 'Signup failed', details: err.message });
+    }
+  });
+  
+  
+  
+  app.get('/api/users', async (req, res) => {
+    try {
+      const users = await User.find().select('+password');
+      res.status(200).json({ users });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to fetch users', details: err.message });
+    }
+  });
+  
+  app.post('/api/create-admin', async (req, res) => {
+    const { email, password } = req.body;
+    const existing = await User.findOne({ email });
+    if (existing) return res.status(400).json({ error: 'Already exists' });
+  
+    const hashed = await bcrypt.hash(password, 10);
+    const admin = new User({ email, password: hashed, role: 'admin' });
+    await admin.save();
+    res.status(201).json({ message: 'Admin created' });
+  });
+    
 
 app.listen(PORT, () => {
   console.log(`🚀 Server is running at http://localhost:${PORT}`);
