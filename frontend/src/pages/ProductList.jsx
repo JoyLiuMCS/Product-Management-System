@@ -1,5 +1,6 @@
 // src/pages/ProductList.jsx
 import React, { useEffect, useState } from 'react';
+import './ProductList.css';
 import axios from '../api/axios';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
@@ -55,11 +56,12 @@ const ProductList = () => {
   });
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <div style={{ padding: '2rem', maxWidth: '1200px',
+        margin: '0 auto' }}>
       {/* 标题 + 筛选 + 添加 */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
         <h2>Products</h2>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <div style={{  display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem'}}>
           <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
             <option value="asc">Price: low to high</option>
             <option value="desc">Price: high to low</option>
@@ -75,15 +77,7 @@ const ProductList = () => {
       ) : (
         <>
           {/* 产品列表 */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(5, 1fr)',
-              gap: '1rem',
-              marginTop: '2rem',
-            }}
-          >
-            {sortedProducts.map((product) => (
+          <div  className="product-grid">{sortedProducts.map((product) => (
               <div
                 key={product._id}
                 style={{
@@ -193,6 +187,7 @@ setQuantity(product.id, num); // ✅ 用新方法直接设置数量
                       e.stopPropagation();
                       navigate(`/products/${product._id}/edit`);
                     }}
+                    style={{ width: '100%' }} 
                   >
                     Edit
                   </button>
