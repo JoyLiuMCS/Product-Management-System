@@ -7,7 +7,8 @@ import ProductDetail from './pages/ProductDetail';
 import ProductFormPage from './pages/ProductFormPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import PasswordResetSent from './pages/PasswordResetSent';
-import Navbar from './components/Navbar'; 
+import ErrorPage from './pages/ErrorPage'; // 新增错误页面
+import Navbar from './components/Navbar';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/password-reset-sent" element={<PasswordResetSent />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="*" element={<ErrorPage />} /> {/* 404 fallback */}
       </Routes>
     </BrowserRouter>
   );

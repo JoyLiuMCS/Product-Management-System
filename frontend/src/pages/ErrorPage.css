@@ -1,0 +1,66 @@
+/* src/pages/ErrorPage.css */
+.error-page-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background-color: #f8f9fa;
+  }
+  
+  .error-card {
+    text-align: center;
+    width: 100%;
+    max-width: 480px;
+    padding: 3rem 2rem;
+  }
+  
+  .error-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid #5a3aff; /* 蓝色圆圈 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem auto;
+    color: #5a3aff; /* 感叹号颜色 */
+    font-size: 2.5rem;
+    font-weight: bold;
+  }
+  
+  
+  .error-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #1f1f1f;
+    margin-bottom: 2rem;
+  }
+  
+  .error-btn {
+    display: inline-block;
+    background-color: #5a3aff;
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    min-width: 180px;
+  }
+  
+  @media (max-width: 480px) {
+    .error-card {
+      padding: 2rem 1rem;
+    }
+  
+    .error-title {
+      font-size: 1.25rem;
+    }
+  
+    .error-btn {
+      font-size: 15px;
+      min-width: 160px;
+    }
+  }
+  
