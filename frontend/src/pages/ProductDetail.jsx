@@ -98,9 +98,13 @@ const ProductDetail = () => {
                 </button>
               </div>
             )}
-            <button className="btn edit-btn" onClick={() => navigate(`/products/${product._id}/edit`)}>
-              ✏️ Edit
-            </button>
+            {/* ✅ 仅 admin 可见 */}
+{JSON.parse(localStorage.getItem('user'))?.role === 'admin' && (
+  <button className="btn edit-btn" onClick={() => navigate(`/products/${product._id}/edit`)}>
+    Edit
+  </button>
+)}
+
           </div>
         </div>
       </div>
