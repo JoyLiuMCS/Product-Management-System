@@ -72,10 +72,15 @@ fetch(endpoint, {
   })
   .then((data) => {
     console.log(`${type} successful:`, data);
-    // ✅ 将用户 token 保存到 localStorage，用于购物车标识
-    localStorage.setItem('user', JSON.stringify(data.user));
-    navigate('/products'); // 跳转到产品页
+  
+    if (type === 'signin') {
+      localStorage.setItem('user', JSON.stringify({ username: formData.email }));
+      navigate('/products'); // 🟢 only after sign in
+    } else {
+      navigate('/signin'); // 🟢 redirect to sign in after sign up
+    }
   })
+  
   
   .catch((err) => {
     console.error('Caught error:', err.message);
