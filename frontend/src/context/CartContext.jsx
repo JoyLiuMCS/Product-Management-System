@@ -12,7 +12,7 @@ export const CartProvider = ({ children }) => {
     console.log('📦 读取 user：', rawUser);
     if (rawUser) {
       const user = JSON.parse(rawUser);
-      const saved = localStorage.getItem(`cart-${user.username}`);
+      const saved = user ? localStorage.getItem(`cart-${user.email}`) : null;
       const parsed = saved ? JSON.parse(saved) : [];
 
       const cartWithId = parsed.map(item => ({
@@ -35,7 +35,7 @@ export const CartProvider = ({ children }) => {
     // 👇 加个保护条件：只有 cart 有内容时才存！
     if (cart.length > 0) {
       console.log('💾 保存购物车到 localStorage ✅');
-      localStorage.setItem(`cart-${user.username}`, JSON.stringify(cart));
+      localStorage.setItem(`cart-${user.email}`, JSON.stringify(cart));
     } else {
       console.log('🚫 不保存空购物车 ❌');
     }
@@ -65,16 +65,18 @@ export const CartProvider = ({ children }) => {
 
   const updateQuantity = (id, delta) => {
     if (!id || typeof delta !== 'number') return;
-    setCart((prev) =>
-      prev
+  
+    setCart((prev) => {
+      return prev
         .map((item) =>
           getId(item) === id
-            ? { ...item, quantity: Math.max(item.quantity + delta, 1) }
+            ? { ...item, quantity: item.quantity + delta }
             : item
         )
-        .filter((item) => item.quantity > 0)
-    );
+        .filter((item) => item.quantity > 0); // 💥 自动移除为 0 的商品
+    });
   };
+  
 
   const setQuantity = (id, newQty) => {
     if (newQty <= 0) {

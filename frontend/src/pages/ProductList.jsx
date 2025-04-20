@@ -28,7 +28,15 @@ const ProductList = () => {
       ? inputCache[id]
       : getQuantity(id).toString();
   };
-  
+  let user = {};
+try {
+  user = JSON.parse(localStorage.getItem('user')) || {};
+} catch (e) {
+  console.warn('⚠️ 用户信息无法解析');
+}
+const isAdmin = user.role === 'admin';
+
+
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true); // 👈 开始加载
@@ -67,14 +75,18 @@ const ProductList = () => {
             <option value="desc">Price: high to low</option>
             <option value="latest">Last Added</option>
           </select>
-          <button onClick={() => navigate('/add-product')}>Add Product</button>
+          {isAdmin && (
+  <button onClick={() => navigate('/add-product')}>➕ Add Product</button>
+)}
         </div>
       </div>
 
       {/* 加载中状态 */}
       {loading ? (
-        <p style={{ marginTop: '2rem' }}>加载中...</p>
-      ) : (
+  <div style={{ display: 'flex', justifyContent: 'center', marginTop: '3rem' }}>
+    <div className="spinner"></div>
+  </div>
+) : (
         <>
           {/* 产品列表 */}
           <div  className="product-grid">{sortedProducts.map((product) => (
@@ -143,9 +155,10 @@ const ProductList = () => {
       return;
     }
 
-setQuantity(product.id, num); // ✅ 用新方法直接设置数量
+  setQuantity(product.id, num); // ✅ 用新方法直接设置数量
 
   if (num <= 0) {
+    removeFromCart(product.id); 
     setInputCache(prev => {
       const copy = { ...prev };
       delete copy[product.id];
@@ -154,13 +167,37 @@ setQuantity(product.id, num); // ✅ 用新方法直接设置数量
   }
   }}
   onBlur={() => {
-    // 输入结束后，清除缓存
+    const newQty = parseInt(tempQty);
+    
+    // 1. 输入是空的或非法数字 ➜ 清除缓存
+    if (tempQty === '' || isNaN(newQty)) {
+      setInputCache(prev => {
+        const copy = { ...prev };
+        delete copy[product.id];
+        return copy;
+      });
+      return;
+    }
+  
+    // 2. 数量小于等于0 ➜ 从购物车中移除
+    if (newQty <= 0) {
+      removeFromCart(product.id);
+    } 
+    // 3. 数量合法 ➜ 设置新数量
+    else if (newQty > product.quantity) {
+      alert('⚠️ 超出库存');
+    } else {
+      setQuantity(product.id, newQty);
+    }
+  
+    // 4. 最后都清除输入缓存
     setInputCache(prev => {
       const copy = { ...prev };
       delete copy[product.id];
       return copy;
     });
   }}
+  
   style={{ width: '50px', textAlign: 'center' }}
 />
 
@@ -180,17 +217,17 @@ setQuantity(product.id, num); // ✅ 用新方法直接设置数量
     </div>
   );
 })()}
-
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/products/${product._id}/edit`);
-                    }}
-                    style={{ width: '100%' }} 
-                  >
-                    Edit
-                  </button>
+{isAdmin && (
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      navigate(`/products/${product._id}/edit`);
+    }}
+    style={{ width: '100%' }}
+  >
+    Edit
+  </button>
+)}
                 </div>
               </div>
             ))}

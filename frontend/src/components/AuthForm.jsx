@@ -72,10 +72,8 @@ fetch(endpoint, {
   })
   .then((data) => {
     console.log(`${type} successful:`, data);
-  
-    // ✅ 将用户 email 保存到 localStorage，用于购物车标识
-    localStorage.setItem('user', JSON.stringify({ username: formData.email }));
-  
+    // ✅ 将用户 token 保存到 localStorage，用于购物车标识
+    localStorage.setItem('user', JSON.stringify(data.user));
     navigate('/products'); // 跳转到产品页
   })
   
