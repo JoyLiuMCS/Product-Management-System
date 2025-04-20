@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { CartContext } from '../context/CartContext';
+import './Cart.css'; // 👈 引入外部 CSS（你也可以改成 inline style）
 
 const Cart = () => {
   const { cart, updateQuantity, removeFromCart } = useContext(CartContext);
@@ -27,7 +28,7 @@ const Cart = () => {
 
   if (cart.length === 0) {
     return (
-      <div style={{ padding: '2rem' }}>
+      <div className="cart-container">
         <h2>Shopping Cart</h2>
         <p>Your cart is empty.</p>
       </div>
@@ -35,52 +36,29 @@ const Cart = () => {
   }
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-      <h2>Shopping Cart</h2>
+    <div className="cart-container">
+      <h2>Cart <span className="cart-count">({cart.length})</span></h2>
 
       {cart.map((item) => {
         const id = item.id || item._id;
         return (
-          <div
-            key={id}
-            style={{
-              display: 'flex',
-              gap: '1rem',
-              marginBottom: '1.5rem',
-              alignItems: 'center',
-              borderBottom: '1px solid #ccc',
-              paddingBottom: '1rem',
-            }}
-          >
-            {/* 商品图片 */}
-            <img
-              src={item.imageUrl}
-              alt={item.name}
-              style={{
-                width: '100px',
-                height: '100px',
-                objectFit: 'cover',
-                borderRadius: '8px',
-                border: '1px solid #ddd',
-              }}
-            />
-
-            {/* 商品信息 */}
-            <div style={{ flex: 1 }}>
+          <div key={id} className="cart-item">
+            <img src={item.imageUrl} alt={item.name} className="cart-item-img" />
+            <div className="cart-item-info">
               <h4>{item.name}</h4>
-              <p>Price: ${item.price} x {item.quantity}</p>
-              <div>
+              <p>${item.price.toFixed(2)}</p>
+              <div className="cart-actions">
                 <button onClick={() => updateQuantity(id, -1)}>-</button>
+                <span>{item.quantity}</span>
                 <button onClick={() => updateQuantity(id, 1)}>+</button>
-                <button onClick={() => removeFromCart(id)}>Remove</button>
+                <button onClick={() => removeFromCart(id)} className="remove-btn">Remove</button>
               </div>
             </div>
           </div>
         );
       })}
 
-      {/* Promo Code Section */}
-      <div style={{ margin: '1rem 0' }}>
+      <div className="promo-section">
         <input
           type="text"
           placeholder="Enter promo code"
@@ -88,31 +66,17 @@ const Cart = () => {
           onChange={(e) => setPromoCode(e.target.value)}
         />
         <button onClick={handleApplyPromo}>Apply</button>
-        {promoError && (
-          <p style={{ color: 'red', marginTop: '0.5rem' }}>{promoError}</p>
-        )}
+        {promoError && <p className="error-text">{promoError}</p>}
       </div>
 
-      {/* Price Summary */}
-      <div style={{ marginTop: '1rem' }}>
-        <p>Subtotal: ${subtotal}</p>
-        <p>Tax: ${tax}</p>
-        <p>Discount: -${discount}</p>
-        <h3>Total: ${total}</h3>
+      <div className="cart-summary">
+        <p>Subtotal: <strong>${subtotal.toFixed(2)}</strong></p>
+        <p>Tax: <strong>${tax.toFixed(2)}</strong></p>
+        <p>Discount: <strong>-${discount.toFixed(2)}</strong></p>
+        <h3>Total: ${total.toFixed(2)}</h3>
       </div>
 
-      <button
-        style={{
-          marginTop: '1rem',
-          padding: '0.75rem 1.5rem',
-          backgroundColor: '#007bff',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-        }}
-        onClick={() => alert('✅ Proceeding to checkout...')}
-      >
+      <button className="checkout-btn" onClick={() => alert('✅ Proceeding to checkout...')}>
         Continue to Checkout
       </button>
     </div>

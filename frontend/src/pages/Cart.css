@@ -1,0 +1,114 @@
+.cart-container {
+    padding: 1.5rem;
+    max-width: 700px;
+    margin: auto;
+  }
+  
+  .cart-count {
+    color: #5a3aff;
+  }
+  
+  .cart-item {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .cart-item-img {
+    width: 100%;
+    max-width: 100px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  .cart-item-info {
+    flex: 1;
+    min-width: 180px;
+  }
+  
+  .cart-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .cart-actions button {
+    padding: 0.3rem 0.6rem;
+    font-size: 14px;
+  }
+  
+  .remove-btn {
+    color: red;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding-left: 1rem;
+  }
+  
+  .promo-section {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .promo-section input {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 14px;
+  }
+  
+  .promo-section button {
+    padding: 0.5rem 1rem;
+    background-color: #5a3aff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .error-text {
+    color: red;
+    margin-top: 0.25rem;
+  }
+  
+  .cart-summary {
+    margin-top: 1.5rem;
+    font-size: 16px;
+  }
+  
+  .checkout-btn {
+    width: 100%;
+    margin-top: 1.5rem;
+    background-color: #5a3aff;
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  /* ✅ 响应式优化 */
+  @media (max-width: 600px) {
+    .cart-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .cart-actions {
+      justify-content: flex-start;
+    }
+  
+    .checkout-btn {
+      font-size: 14px;
+    }
+  }
+  
