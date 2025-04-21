@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { CartContext } from '../context/CartContext';
-import './Cart.css'; // 👈 引入外部 CSS（你也可以改成 inline style）
+import './Cart.css'; //
 
 const Cart = () => {
   const { cart, updateQuantity, removeFromCart } = useContext(CartContext);
