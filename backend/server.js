@@ -45,20 +45,31 @@ app.post('/api/products', async (req, res) => {
 });
 
 // 获取所有产品（分页 + 排序）
+
 app.get('/api/products', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const sortOrder = req.query.sort || 'asc';
+    const search = req.query.search || '';  // ✅ 新增关键词
 
+    // 排序逻辑
     let sortObj = { createdAt: -1 };
     if (sortOrder === 'asc') sortObj = { price: 1 };
     else if (sortOrder === 'desc') sortObj = { price: -1 };
     else if (sortOrder === 'latest') sortObj = { createdAt: -1 };
 
+    // ✅ 搜索条件（模糊匹配名称）
+    const query = search
+      ? { name: { $regex: search, $options: 'i' } } // i = ignore case
+      : {};
+
     const skip = (page - 1) * limit;
-    const total = await Product.countDocuments();
-    const products = await Product.find().sort(sortObj).skip(skip).limit(limit);
+    const total = await Product.countDocuments(query);
+    const products = await Product.find(query)
+      .sort(sortObj)
+      .skip(skip)
+      .limit(limit);
 
     res.json({
       products,
@@ -69,6 +80,7 @@ app.get('/api/products', async (req, res) => {
     res.status(500).json({ error: '获取产品失败', details: err.message });
   }
 });
+
 
 // 获取单个产品
 app.get('/api/products/:id', async (req, res) => {

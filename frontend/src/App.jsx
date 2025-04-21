@@ -9,16 +9,19 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import PasswordResetSent from './pages/PasswordResetSent';
 import ErrorPage from './pages/ErrorPage'; 
 import Navbar from './components/Navbar';
+import { useState } from 'react';
 
 function App() {
+  const [searchTerm, setSearchTerm] = useState('');
   return (
     <BrowserRouter>
-      <Navbar />
+      <Navbar onSearch={(term) => setSearchTerm(term)} />
       <Routes>
         <Route path="/" element={<SignIn />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/products" element={<ProductList />} />
+        <Route path="/products" element={<ProductList searchTerm={searchTerm} />}
+        />
         <Route path="/add-product" element={<ProductFormPage />} />
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/products/:id/edit" element={<ProductFormPage />} />
@@ -26,6 +29,7 @@ function App() {
         <Route path="/password-reset-sent" element={<PasswordResetSent />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="*" element={<ErrorPage />} /> {/* 404 fallback */}
+        
       </Routes>
     </BrowserRouter>
   );

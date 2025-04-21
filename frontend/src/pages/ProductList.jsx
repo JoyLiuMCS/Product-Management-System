@@ -11,7 +11,7 @@ import Pagination from '../components/Pagination';
 
 
 
-const ProductList = () => {
+const ProductList = ({ searchTerm }) => {
   const alert = useAlert();
   const [products, setProducts] = useState([]);
   const [sortOrder, setSortOrder] = useState('asc');
@@ -20,7 +20,7 @@ const ProductList = () => {
   const [loading, setLoading] = useState(false); // ✨ 加上 loading
   const navigate = useNavigate();
   const { cart, addToCart, updateQuantity, removeFromCart, setQuantity } = useContext(CartContext);
-  const [searchTerm, setSearchTerm] = useState('');
+  
 
   
   const getQuantity = (productId) => {
@@ -102,8 +102,12 @@ useEffect(() => {
   <div style={{ display: 'flex', justifyContent: 'center', marginTop: '3rem' }}>
     <div className="spinner"></div>
   </div>
+) : products.length === 0 ? (
+  <p style={{ textAlign: 'center', marginTop: '2rem' }}>
+    😢 No products found.
+  </p>
 ) : (
-        <>
+  <>
           {/* 产品列表 */}
           <div  className="product-grid">{sortedProducts.map((product) => (
     <ProductCard
