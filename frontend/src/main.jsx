@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import { CartProvider } from './context/CartContext';
-import { Provider } from 'react-redux';
-import store from './redux/store';
 
 // ✅ 延迟加载 CartProvider 直到 user 准备好
 function AppWithUserReady() {
@@ -20,9 +18,7 @@ function AppWithUserReady() {
 
   return (
     <CartProvider>
-      <Provider store={store}>
         <App />
-      </Provider>
     </CartProvider>
   );
 }
