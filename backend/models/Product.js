@@ -34,10 +34,9 @@ const productSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // 自动添加 createdAt 和 updatedAt 时间戳
+    timestamps: true,
   }
 );
 
-// 创建模型并导出
 const Product = mongoose.model('Product', productSchema);
 export default Product;
