@@ -18,12 +18,12 @@
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    border: 4px solid #5a3aff; /* 蓝色圆圈 */
+    border: 4px solid #5a3aff; 
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 1.5rem auto;
-    color: #5a3aff; /* 感叹号颜色 */
+    color: #5a3aff; 
     font-size: 2.5rem;
     font-weight: bold;
   }

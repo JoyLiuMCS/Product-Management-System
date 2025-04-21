@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // 确保导入 Link
+import { useNavigate, Link } from 'react-router-dom';
 import '../components/AuthStyles.css';
 
 export default function ForgotPasswordPage() {

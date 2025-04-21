@@ -1,4 +1,3 @@
-// src/pages/ProductList.jsx
 import React, { useEffect, useState } from 'react';
 import './ProductList.css';
 import axios from '../api/axios';
@@ -12,7 +11,6 @@ import Pagination from '../components/Pagination';
 
 
 const ProductList = ({ searchTerm }) => {
-  const alert = useAlert();
   const [products, setProducts] = useState([]);
   const [sortOrder, setSortOrder] = useState('asc');
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,14 +18,12 @@ const ProductList = ({ searchTerm }) => {
   const [loading, setLoading] = useState(false); // ✨ 加上 loading
   const navigate = useNavigate();
   const { cart, addToCart, updateQuantity, removeFromCart, setQuantity } = useContext(CartContext);
-  
-
-  
+  const alert = useAlert();
   const getQuantity = (productId) => {
     const found = cart.find(item => item.id === productId);
     return found ? found.quantity : 0;
   };
-  const [inputCache, setInputCache] = useState({}); // 用于缓冲用户输入
+  const [inputCache, setInputCache] = useState({}); 
   const [tempQty, setTempQty] = useState('');
   const getInputQty = (id) => {
     return inputCache[id] !== undefined
@@ -38,7 +34,7 @@ const ProductList = ({ searchTerm }) => {
 try {
   user = JSON.parse(localStorage.getItem('user')) || {};
 } catch (e) {
-  console.warn('⚠️ 用户信息无法解析');
+  console.warn('⚠️ can not parse user data from localStorage');
 }
 const isAdmin = user.role === 'admin';
 
@@ -59,7 +55,7 @@ useEffect(() => {
       setProducts(mapped);
       setTotalPages(res.data.totalPages);
     } catch (err) {
-      console.error('❌ 获取产品失败：', err.message);
+      console.error('❌ can not get product information', err.message);
     } finally {
       setLoading(false);
     }
@@ -81,7 +77,7 @@ useEffect(() => {
     
     <div style={{ padding: '2rem', maxWidth: '1200px',
         margin: '0 auto' }}>
-      {/* 标题 + 筛选 + 添加 */}
+      {/* title + filter + add  */}
       <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
         <h2>Products</h2>
         <div style={{  display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem'}}>
@@ -97,7 +93,7 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* 加载中状态 */}
+      {/* loading*/}
       {loading ? (
   <div style={{ display: 'flex', justifyContent: 'center', marginTop: '3rem' }}>
     <div className="spinner"></div>
@@ -108,7 +104,7 @@ useEffect(() => {
   </p>
 ) : (
   <>
-          {/* 产品列表 */}
+          {/* product list*/}
           <div  className="product-grid">{sortedProducts.map((product) => (
     <ProductCard
       key={product._id}

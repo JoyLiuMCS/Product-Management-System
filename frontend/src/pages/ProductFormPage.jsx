@@ -1,4 +1,3 @@
-// frontend/src/pages/ProductFormPage.jsx
 import React from 'react';
 import ProductForm from '../components/ProductForm';
 import useAdminGuard from '../hooks/useAdminGuard';

@@ -84,7 +84,6 @@
     background-color: #666;
   }
   
-  /* ✅ 响应式样式：适配小屏设备 */
   @media (max-width: 768px) {
     .product-detail-content {
       flex-direction: column;
