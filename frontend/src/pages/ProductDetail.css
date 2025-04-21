@@ -55,22 +55,31 @@
   }
   .cart-button-row {
     display: flex;
-    gap: 1rem;
-    align-items: center;
-    margin-top: 1rem;
-    flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+  flex-wrap: nowrap;        
+  justify-content: flex-start;
   }
   
   
   .btn {
     padding: 0.5rem 1rem;
-    background-color: #333;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+  font-size: 1rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: auto;               
+  max-width: 200px;         
+  box-sizing: border-box;
   }
+  
   
   .btn:hover {
     background-color: #555;
@@ -104,12 +113,18 @@
     }
   
     .btn {
-      width: 100%;
-      text-align: center;
+      font-size: 0.75rem;
+    padding: 0.4rem 0.75rem;
+    width: auto;               /* ✅ 不要占满整行 */
+    max-width: 150px;          /* ✅ 控制按钮宽度 */
+    white-space: nowrap;
     }
+  
     .cart-button-row {
-      flex-direction: column;
-      align-items: flex-start;
+      flex-direction: row; 
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      align-items: center;
       gap: 0.75rem;
     }
   }

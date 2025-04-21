@@ -44,7 +44,39 @@ const ProductDetail = () => {
   }
 
   const quantity = getQuantity(product.id);
-
+  const renderCartButtons = () => {
+    const isAdmin = JSON.parse(localStorage.getItem('user'))?.role === 'admin';
+  
+    return (
+      <div className="cart-button-row">
+        {quantity === 0 ? (
+          <button className="btn" onClick={() => addToCart(product)}>
+            Add to Cart
+          </button>
+        ) : (
+          <QuantityControl
+            product={product}
+            quantity={quantity}
+            addToCart={addToCart}
+            removeFromCart={removeFromCart}
+            updateQuantity={updateQuantity}
+            setQuantity={(id, qty) => {
+              const diff = qty - getQuantity(id);
+              updateQuantity(id, diff);
+            }}
+            alert={alert}
+          />
+        )}
+  
+        {isAdmin && (
+          <button className="btn edit-btn" onClick={() => navigate(`/products/${product._id}/edit`)}>
+            Edit
+          </button>
+        )}
+      </div>
+    );
+  };
+  
   return (
     <div className="product-detail-container">
       <button 
@@ -64,61 +96,11 @@ const ProductDetail = () => {
           <p><strong>Price:</strong> ${product.price}</p>
           <p><strong>Description:</strong></p>
           <p>{product.description}</p>
-
           <div className="product-detail-cart">
-  {JSON.parse(localStorage.getItem('user'))?.role === 'admin' ? (
-    // admin user: show Add to Cart and Edit button
-    //when quantity is 0, show Add to Cart button
-    //when quantity > 0, show QuantityControl
-    //when quantity > product.quantity, show alert
-    <div className="cart-button-row">
-      {quantity === 0 ? (
-        <button className="btn" onClick={() => addToCart(product)}>
-         Add to Cart
-        </button>
-      ) : (
-        <QuantityControl
-          product={product}
-          quantity={quantity}
-          addToCart={addToCart}
-          removeFromCart={removeFromCart}
-          updateQuantity={updateQuantity}
-          setQuantity={(id, qty) => {
-            const diff = qty - getQuantity(id);
-            updateQuantity(id, diff);
-          }}
-          alert={alert}
-        />
-      )}
-      <button className="btn edit-btn" onClick={() => navigate(`/products/${product._id}/edit`)}>
-        Edit
-      </button>
-    </div>
-  ) : (
-    // regular user: only Add to Cart
-    //when quantity is 0, show Add to Cart button
-    //when quantity > 0, show QuantityControl
-    //when quantity > product.quantity, show alert
-    quantity === 0 ? (
-      <button className="btn" onClick={() => addToCart(product)}>
-        Add to Cart
-      </button>
-    ) : (
-      <QuantityControl
-        product={product}
-        quantity={quantity}
-        addToCart={addToCart}
-        removeFromCart={removeFromCart}
-        updateQuantity={updateQuantity}
-        setQuantity={(id, qty) => {
-          const diff = qty - getQuantity(id);
-          updateQuantity(id, diff);
-        }}
-        alert={alert}
-      />
-    )
-  )}
+  {renderCartButtons()}
 </div>
+
+          
   
 
   
