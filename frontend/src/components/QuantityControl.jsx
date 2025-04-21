@@ -1,4 +1,3 @@
-// src/components/QuantityControl.jsx
 import React, { useState, useEffect } from 'react';
 import './QuantityControl.css';
 

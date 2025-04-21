@@ -112,22 +112,21 @@ const isAdmin = user.role === 'admin';
       </div>
 
       <div className="form-group">
-        <label>Category:</label>
-        <div className="form-radio-group">
-          <label>
-            <input type="radio" name="category" value="food" checked={formData.category === 'food'} onChange={handleChange} />
-            Food
-          </label>
-          <label>
-            <input type="radio" name="category" value="electronics" checked={formData.category === 'electronics'} onChange={handleChange} />
-            Electronics
-          </label>
-          <label>
-            <input type="radio" name="category" value="clothing" checked={formData.category === 'clothing'} onChange={handleChange} />
-            Clothing
-          </label>
-        </div>
-      </div>
+  <label htmlFor="category">Category:</label>
+  <select
+    name="category"
+    id="category"
+    value={formData.category}
+    onChange={handleChange}
+    required
+  >
+    <option value="">Select Category</option>
+    <option value="food">Food</option>
+    <option value="electronics">Electronics</option>
+    <option value="clothing">Clothing</option>
+  </select>
+</div>
+
 
       <div className="form-group">
         <label>Price:</label>
