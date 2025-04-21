@@ -13,11 +13,18 @@ const SearchBar = ({ onSearch }) => {
   return (
     <form className="search-bar" onSubmit={handleSubmit}>
       <input
-        type="text"
-        placeholder="Search products..."
-        value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}
-      />
+  type="text"
+  placeholder="Search products..."
+  value={keyword}
+  onChange={(e) => {
+    const value = e.target.value;
+    setKeyword(value);
+    if (value.trim() === '') {
+      onSearch(''); // when input is cleared, call onSearch with empty string
+    }
+  }}
+/>
+
       <button type="submit">🔍</button>
     </form>
   );
