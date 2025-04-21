@@ -20,7 +20,6 @@ function ProductForm() {
 const isAdmin = user.role === 'admin';
 
 
-  // ✅ 编辑模式时，预填数据
   useEffect(() => {
     const fetchProduct = async () => {
       if (id) {
@@ -36,7 +35,7 @@ const isAdmin = user.role === 'admin';
           });
           setPreviewUrl(res.data.imageUrl || '');
         } catch (err) {
-          console.error('❌ 加载产品失败：', err.message);
+          console.error('Fail to loading products：', err.message);
         }
       }
     };
@@ -44,24 +43,22 @@ const isAdmin = user.role === 'admin';
     fetchProduct();
   }, [id]);
 
-  // ✅ 提交逻辑
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (id) {
         await api.put(`/products/${id}`, formData);
-        console.log('✅ 产品已更新');
+        console.log('Product updated');
       } else {
         await api.post('/products', formData);
-        console.log('✅ 创建成功');
+        console.log('Product created');
       }
       navigate('/products');
     } catch (err) {
-      console.error('❌ 提交失败：', err.message);
+      console.error('Failed to submit', err.message);
     }
   };
 
-  // ✅ 输入同步逻辑
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -79,7 +76,7 @@ const isAdmin = user.role === 'admin';
       showCancelButton: true,
       confirmButtonText: 'Yes, delete it',
       cancelButtonText: 'Cancel',
-      reverseButtons: true, // ✅ 让 Cancel 在左，Confirm 在右
+      reverseButtons: true, 
     });
   
     if (result.isConfirmed) {
