@@ -1,4 +1,3 @@
-// src/pages/ProductList.jsx
 import React, { useEffect, useState } from 'react';
 import './ProductList.css';
 import axios from '../api/axios';
