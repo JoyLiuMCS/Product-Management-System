@@ -1,6 +1,8 @@
 import api from '../api/axios';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import './ProductForm.css'; 
 
 function ProductForm() {
   const [formData, setFormData] = useState({
@@ -14,6 +16,9 @@ function ProductForm() {
   const [previewUrl, setPreviewUrl] = useState('');
   const navigate = useNavigate();
   const { id } = useParams();
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+const isAdmin = user.role === 'admin';
+
 
   // ✅ 编辑模式时，预填数据
   useEffect(() => {
@@ -65,93 +70,106 @@ function ProductForm() {
     }));
   };
 
+
+  const handleDelete = async () => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true, // ✅ 让 Cancel 在左，Confirm 在右
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await api.delete(`/products/${id}`);
+        Swal.fire('Deleted!', 'The product has been removed.', 'success');
+        navigate('/products');
+      } catch (err) {
+        Swal.fire('Error', 'Failed to delete the product.', 'error');
+      }
+    }
+  };
+
+
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>{id ? 'Edit Product' : 'Create Product'}</h2>
 
-      <div style={{ display: 'flex', gap: '2rem' }}>
-        <div style={{ flex: 1 }}>
-          <div>
-            <label>Product Name:</label>
-            <input name="name" value={formData.name} onChange={handleChange} required />
-          </div>
+<form onSubmit={handleSubmit} className="form-container">
+  <h2>{id ? 'Edit Product' : 'Create Product'}</h2>
 
-          <div>
-            <label>Description:</label>
-            <textarea name="description" value={formData.description} onChange={handleChange} required />
-          </div>
+  <div className="form-grid">
+    <div className="form-left">
+      <div className="form-group">
+        <label>Product Name:</label>
+        <input name="name" value={formData.name} onChange={handleChange} required />
+      </div>
 
-          <div>
-            <label>Category:</label>
-            <div>
-              <label>
-                <input type="radio" name="category" value="food" checked={formData.category === 'food'} onChange={handleChange} />
-                Food
-              </label>
-              <label>
-                <input type="radio" name="category" value="electronics" checked={formData.category === 'electronics'} onChange={handleChange} />
-                Electronics
-              </label>
-              <label>
-                <input type="radio" name="category" value="clothing" checked={formData.category === 'clothing'} onChange={handleChange} />
-                Clothing
-              </label>
-            </div>
-          </div>
+      <div className="form-group">
+        <label>Description:</label>
+        <textarea name="description" value={formData.description} onChange={handleChange} required />
+      </div>
 
-          <div>
-            <label>Price:</label>
-            <input name="price" type="number" value={formData.price} onChange={handleChange} required />
-          </div>
-
-          <div>
-            <label>In Stock Quantity:</label>
-            <input name="quantity" type="number" value={formData.quantity} onChange={handleChange} />
-          </div>
-
-          <div>
-            <label>Image Link:</label>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} />
-              <button type="button" onClick={() => setPreviewUrl(formData.imageUrl)}>Update</button>
-            </div>
-          </div>
-        </div>
-
-        <div style={{ flex: 1 }}>
-          <h4>Image Preview</h4>
-          {previewUrl ? (
-            <img src={previewUrl} alt="Preview" style={{ maxWidth: '100%' }} />
-          ) : (
-            <p>暂无预览图</p>
-          )}
+      <div className="form-group">
+        <label>Category:</label>
+        <div className="form-radio-group">
+          <label>
+            <input type="radio" name="category" value="food" checked={formData.category === 'food'} onChange={handleChange} />
+            Food
+          </label>
+          <label>
+            <input type="radio" name="category" value="electronics" checked={formData.category === 'electronics'} onChange={handleChange} />
+            Electronics
+          </label>
+          <label>
+            <input type="radio" name="category" value="clothing" checked={formData.category === 'clothing'} onChange={handleChange} />
+            Clothing
+          </label>
         </div>
       </div>
 
-      <button type="submit" style={{ marginTop: '1rem' }}>
-        {id ? 'Update Product' : 'Add Product'}
-      </button>
-      {id && (
-  <button
-    type="button"
-    onClick={async () => {
-      const confirmDelete = window.confirm('确定要删除这个产品吗？');
-      if (!confirmDelete) return;
+      <div className="form-group">
+        <label>Price:</label>
+        <input name="price" type="number" value={formData.price} onChange={handleChange} required />
+      </div>
 
-      try {
-        await api.delete(`/products/${id}`);
-        console.log('✅ 产品已删除');
-        navigate('/products');
-      } catch (err) {
-        console.error('❌ 删除失败：', err.message);
-      }
-    }}
-    style={{ marginTop: '1rem', backgroundColor: 'red', color: 'white' }}
-  >
-    Delete Product
-  </button>
-)}
-    </form>
+      <div className="form-group">
+        <label>In Stock Quantity:</label>
+        <input name="quantity" type="number" value={formData.quantity} onChange={handleChange} />
+      </div>
+
+      <div className="form-group">
+        <label>Image Link:</label>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} />
+          <button type="button" className="btn" onClick={() => setPreviewUrl(formData.imageUrl)}>Update</button>
+        </div>
+      </div>
+    </div>
+
+    <div className="form-right">
+      <h4>Image Preview</h4>
+      {previewUrl ? (
+        <img src={previewUrl} alt="Preview" className="image-preview" />
+      ) : (
+        <p>No image preview available.</p>
+      )}
+    </div>
+  </div>
+
+  <div className="form-buttons">
+    <button type="submit" className="btn btn-primary">
+      {id ? 'Update Product' : 'Add Product'}
+    </button>
+    {id && isAdmin && (
+      <button type="button" className="btn btn-danger" onClick={handleDelete}>
+        Delete Product
+      </button>
+    )}
+  </div>
+</form>
+
   );
 }
 

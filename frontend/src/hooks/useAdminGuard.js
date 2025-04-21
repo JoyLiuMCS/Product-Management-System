@@ -1,6 +1,7 @@
 // src/hooks/useAdminGuard.js
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const useAdminGuard = () => {
   const navigate = useNavigate();
@@ -8,17 +9,30 @@ const useAdminGuard = () => {
   useEffect(() => {
     const rawUser = localStorage.getItem('user');
     if (!rawUser) {
-      alert('⚠️ 请先登录');
-      navigate('/signin');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in first.',
+        confirmButtonText: 'Go to Sign In',
+      }).then(() => {
+        navigate('/signin');
+      });
       return;
     }
 
     const user = JSON.parse(rawUser);
     if (user.role !== 'admin') {
-      alert('⛔ 只有管理员可以访问这个页面');
-      navigate('/products');
+      Swal.fire({
+        icon: 'error',
+        title: 'Access Denied',
+        text: 'Only admins can access this page.',
+        confirmButtonText: 'Back to Products',
+      }).then(() => {
+        navigate('/products');
+      });
     }
-  }, []);
+  }, [navigate]);
 };
 
 export default useAdminGuard;
+

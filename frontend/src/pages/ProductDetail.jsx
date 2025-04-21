@@ -3,7 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import { useContext } from 'react';
 import { CartContext } from '../context/CartContext';
+import useAlert from '../hooks/useAlert';
+import QuantityControl from '../components/QuantityControl';
 import './ProductDetail.css';
+
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -11,7 +14,7 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [tempQty, setTempQty] = useState('');
   const { cart, addToCart, updateQuantity, removeFromCart } = useContext(CartContext);
-
+  const alert = useAlert();
   const getQuantity = (productId) => {
     const found = cart.find(item => item.id === productId);
     return found ? found.quantity : 0;
@@ -44,6 +47,11 @@ const ProductDetail = () => {
 
   return (
     <div className="product-detail-container">
+      <button 
+    onClick={() => navigate('/products')}
+  >
+    ← Back to Products
+  </button>
       <h2>Product Detail</h2>
       <div className="product-detail-content">
         <div className="product-detail-image">
@@ -58,58 +66,66 @@ const ProductDetail = () => {
           <p>{product.description}</p>
 
           <div className="product-detail-cart">
-            {quantity === 0 ? (
-              <button className="btn" onClick={() => addToCart(product)}>
-                ➕ Add to Cart
-              </button>
-            ) : (
-              <div className="cart-quantity-group">
-                <button onClick={() => updateQuantity(product.id, -1)}>➖</button>
-                <input
-                  type="number"
-                  value={tempQty}
-                  min="0"
-                  max={product.quantity}
-                  onChange={(e) => setTempQty(e.target.value)}
-                  onBlur={() => {
-                    const newQty = parseInt(tempQty);
-                    if (tempQty === '' || newQty <= 0) {
-                      removeFromCart(product.id);
-                    } else if (isNaN(newQty)) {
-                      setTempQty(getQuantity(product.id).toString());
-                    } else if (newQty > product.quantity) {
-                      alert('⚠️ 超出库存');
-                      setTempQty(getQuantity(product.id).toString());
-                    } else {
-                      updateQuantity(product.id, newQty - getQuantity(product.id));
-                    }
-                  }}
-                />
-                <button
-                  onClick={() => {
-                    if (quantity >= product.quantity) {
-                      alert('⚠️ 超出库存，Out of Stock!');
-                      return;
-                    }
-                    addToCart(product);
-                  }}
-                >
-                  ➕
-                </button>
-              </div>
-            )}
-            {/* ✅ 仅 admin 可见 */}
-{JSON.parse(localStorage.getItem('user'))?.role === 'admin' && (
-  <button className="btn edit-btn" onClick={() => navigate(`/products/${product._id}/edit`)}>
-    Edit
-  </button>
-)}
+  {JSON.parse(localStorage.getItem('user'))?.role === 'admin' ? (
+    // admin user: show Add to Cart and Edit button
+    //when quantity is 0, show Add to Cart button
+    //when quantity > 0, show QuantityControl
+    //when quantity > product.quantity, show alert
+    <div className="cart-button-row">
+      {quantity === 0 ? (
+        <button className="btn" onClick={() => addToCart(product)}>
+         Add to Cart
+        </button>
+      ) : (
+        <QuantityControl
+          product={product}
+          quantity={quantity}
+          addToCart={addToCart}
+          removeFromCart={removeFromCart}
+          updateQuantity={updateQuantity}
+          setQuantity={(id, qty) => {
+            const diff = qty - getQuantity(id);
+            updateQuantity(id, diff);
+          }}
+          alert={alert}
+        />
+      )}
+      <button className="btn edit-btn" onClick={() => navigate(`/products/${product._id}/edit`)}>
+        Edit
+      </button>
+    </div>
+  ) : (
+    // regular user: only Add to Cart
+    //when quantity is 0, show Add to Cart button
+    //when quantity > 0, show QuantityControl
+    //when quantity > product.quantity, show alert
+    quantity === 0 ? (
+      <button className="btn" onClick={() => addToCart(product)}>
+        Add to Cart
+      </button>
+    ) : (
+      <QuantityControl
+        product={product}
+        quantity={quantity}
+        addToCart={addToCart}
+        removeFromCart={removeFromCart}
+        updateQuantity={updateQuantity}
+        setQuantity={(id, qty) => {
+          const diff = qty - getQuantity(id);
+          updateQuantity(id, diff);
+        }}
+        alert={alert}
+      />
+    )
+  )}
+</div>
+  
 
-          </div>
+  
         </div>
       </div>
     </div>
-  );
+);
 };
 
 export default ProductDetail;

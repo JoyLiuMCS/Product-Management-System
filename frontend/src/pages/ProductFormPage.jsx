@@ -4,11 +4,10 @@ import ProductForm from '../components/ProductForm';
 import useAdminGuard from '../hooks/useAdminGuard';
 
 const ProductFormPage = () => {
-  useAdminGuard(); // 💥 这里就是调用你刚刚写的自定义 hook！
+  useAdminGuard();
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Create or Edit a Product</h2>
+    <div style={{ padding: '2rem' }}>
       <ProductForm />
     </div>
   );
