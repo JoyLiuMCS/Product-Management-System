@@ -9,8 +9,8 @@ const Navbar = () => {
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleSignOut = () => {
-    localStorage.removeItem('user');       // ✅ 清除登录状态
-    navigate('/signin');                   // ✅ 跳转到登录页面
+    localStorage.removeItem('user');       // 清除登录状态
+    navigate('/signin');                   // 跳转到登录页面
   };
 
   return (
@@ -25,7 +25,7 @@ const Navbar = () => {
     }}>
       <span
         style={{ marginRight: '20px', cursor: 'pointer' }}
-        onClick={handleSignOut}             // ✅ 使用真正的登出函数
+        onClick={handleSignOut}             // 使用真正的登出函数
       >
         👤 Sign Out
       </span>

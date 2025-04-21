@@ -4,7 +4,7 @@ import App from './App';
 import './index.css';
 import { CartProvider } from './context/CartContext';
 
-// ✅ 延迟加载 CartProvider 直到 user 准备好
+//延迟加载 CartProvider 直到 user 准备好
 function AppWithUserReady() {
   const [userReady, setUserReady] = useState(false);
 

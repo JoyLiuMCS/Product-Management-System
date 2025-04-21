@@ -7,7 +7,7 @@ import ProductDetail from './pages/ProductDetail';
 import ProductFormPage from './pages/ProductFormPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import PasswordResetSent from './pages/PasswordResetSent';
-import ErrorPage from './pages/ErrorPage'; // 新增错误页面
+import ErrorPage from './pages/ErrorPage'; 
 import Navbar from './components/Navbar';
 
 function App() {
