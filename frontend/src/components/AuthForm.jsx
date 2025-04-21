@@ -73,7 +73,6 @@ export default function AuthForm({ type = 'signin' }) {
       .then((data) => {
         console.log(`${type} successful:`, data);
 
-        // 保存完整 user 信息，供 CartContext 使用
         if (type === 'signin') {
           localStorage.setItem('user', JSON.stringify(data.user));
           navigate('/products');

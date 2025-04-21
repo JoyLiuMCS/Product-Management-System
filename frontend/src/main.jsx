@@ -4,17 +4,16 @@ import App from './App';
 import './index.css';
 import { CartProvider } from './context/CartContext';
 
-//延迟加载 CartProvider 直到 user 准备好
 function AppWithUserReady() {
   const [userReady, setUserReady] = useState(false);
 
   useEffect(() => {
     const rawUser = localStorage.getItem('user');
-    console.log('📦 读取 user from localStorage:', rawUser);
+    console.log('Get user from localStorage:', rawUser);
     setUserReady(true);
   }, []);
 
-  if (!userReady) return <p>⏳ 正在加载用户信息...</p>;
+  if (!userReady) return <p>Loading user info...</p>;
 
   return (
     <CartProvider>

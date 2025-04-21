@@ -5,10 +5,8 @@ export const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
 
-  // 统一获取 id
   const getId = (item) => item.id || item._id;
 
-  // 自动根据当前 user.email 加载购物车（监听变化）
   useEffect(() => {
     let currentEmail = null;
 
@@ -29,17 +27,16 @@ export const CartProvider = ({ children }) => {
         id: item.id || item._id,
       }));
 
-      console.log('🛒 重新加载购物车：', cartWithId);
+      console.log('Reloading cart: ', cartWithId);
       setCart(cartWithId);
     };
 
-    loadCart(); // 首次加载
-    const interval = setInterval(loadCart, 1000); // 每秒轮询一次 user.email 变化
+    loadCart(); 
+    const interval = setInterval(loadCart, 1000); 
 
     return () => clearInterval(interval);
   }, []);
 
-  // 每次购物车变化时保存到 localStorage
   useEffect(() => {
     const rawUser = localStorage.getItem('user');
     if (!rawUser) return;
@@ -49,13 +46,12 @@ export const CartProvider = ({ children }) => {
 
     if (email && cart.length > 0) {
       localStorage.setItem(`cart-${email}`, JSON.stringify(cart));
-      console.log(`💾 已保存 cart-${email} 到 localStorage`);
+      console.log(`Save cart-${email} to localStorage`);
     } else {
-      console.log('🧹 空购物车或用户未登录，不保存');
+      console.log('Cart empty or not logged in');
     }
   }, [cart]);
 
-  // 添加商品
   const addToCart = (product) => {
     const productId = getId(product);
     if (!product || !productId) return;
@@ -74,7 +70,6 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  // 更新商品数量
   const updateQuantity = (id, delta) => {
     if (!id || typeof delta !== 'number') return;
 
@@ -85,11 +80,10 @@ export const CartProvider = ({ children }) => {
             ? { ...item, quantity: item.quantity + delta }
             : item
         )
-        .filter((item) => item.quantity > 0) // 删除为 0 的商品
+        .filter((item) => item.quantity > 0) 
     );
   };
 
-  // 设置商品指定数量（如直接输入数字）
   const setQuantity = (id, newQty) => {
     if (newQty <= 0) {
       removeFromCart(id);
@@ -102,7 +96,6 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // 移除商品
   const removeFromCart = (id) => {
     if (!id) return;
     setCart((prev) => prev.filter((item) => getId(item) !== id));
