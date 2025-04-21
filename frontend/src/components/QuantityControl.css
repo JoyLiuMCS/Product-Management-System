@@ -1,0 +1,14 @@
+.cart-quantity-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .cart-quantity-group input {
+    width: 50px;
+    text-align: center;
+    padding: 4px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
